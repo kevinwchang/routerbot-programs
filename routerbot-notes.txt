@@ -1,0 +1,30 @@
+to get wifi up:
+wifi
+ifup wan (?)
+
+get OpenWrt SDK (stripped down buildroot) from
+http://downloads.openwrt.org/kamikaze/8.09.2/brcm47xx/OpenWrt-SDK-brcm47xx-for-Linux-i686.tar.bz2
+
+ln -s ~/routerbot/OpenWrt-SDK-brcm47xx-for-Linux-i686/staging_dir/toolchain-mipsel_gcc4.1.2/ ~/routerbot/toolchain
+
+get libusb from
+http://sourceforge.net/projects/libusb/files/libusb-1.0/libusb-1.0.8/libusb-1.0.8.tar.bz2/download
+
+build libusb:
+./configure --build=i686-linux --host=mipsel-linux --prefix=$HOME/routerbot/toolchain && make && make install
+
+install on router (opkg update, opkg install):
+librt
+libpthread
+
+zlib:
+http://sourceforge.net/projects/libpng/files/zlib/1.2.3/zlib-1.2.3.tar.bz2/download
+./configure --prefix=$HOME/routerbot/toolchain
+edit Makefile according to http://www.crosscompile.org/static/pages/ZLib.html (CC, LDSHARED, CPP, AR, RANLIB)
+opkg install zlib
+
+libwebsockets:
+git clone git://git.warmcat.com/libwebsockets
+./configure --build=i686-linux --host=mipsel-linux --prefix=$HOME/routerbot/toolchain --datadir=/usr/share
+make && make install datadir=$HOME/routerbot/toolchain/share
+~/routerbot/toolchain/lib$ scp libwebsockets.so* routerbot:/usr/lib/
